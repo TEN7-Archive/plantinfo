@@ -2,9 +2,10 @@
 {% set item_type_parent = nav_type_parent %}
 {% set item_type_name = nav_type_name %}
 {% set item_type_title = nav_type_title ~ ' directory (' ~ letter_slug ~ ')' %}
-{% set itemTypeCollection = plant_info_data[item_type_parent]['data'][item_type] %}
+{% set item_type_parent_data = plant_info_data[item_type_parent]['data'] %}
+{% set itemTypeCollection = item_type_parent_data[item_type] %}
 {% set item_type_items = helpers.filterDirectoryItemsByLetter(itemTypeCollection, letter_slug) %}
-{% set directory_link_list = helpers.createDirectoryLinkList(collections, item_type_items, item_type, item_type) %}
+{% set directory_link_list = helpers.createDirectoryLinkList(item_type_parent_data, item_type_items, item_type, item_type) %}
 {% set plant_link_list_wrapper =
   {
     wrapper_class: '[ directory-' ~ item_type ~ '__link-list-section ]',

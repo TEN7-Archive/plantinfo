@@ -2669,125 +2669,127 @@ module.exports = {
       catalog_web_only: false
     };
 
-    if (
-      module.exports.objectHasOwnProperties(nurseryData, ['name'])
-    ) {
-      nurseryDetails.name = nurseryData.name;
-    }
-
-    if (
-      module.exports.objectHasOwnProperties(nurseryData, ['contact'])
-    ) {
-      const contact = nurseryData.contact;
-
+    if (module.exports.isObject(nurseryData)) {
       if (
-        module.exports.objectHasOwnProperties(contact, ['website', 'url'])
+        module.exports.objectHasOwnProperties(nurseryData, ['name'])
       ) {
-        nurseryDetails.website = contact.website.url;
+        nurseryDetails.name = nurseryData.name;
       }
 
       if (
-        module.exports.objectHasOwnProperties(contact, ['email'])
+        module.exports.objectHasOwnProperties(nurseryData, ['contact'])
       ) {
-        nurseryDetails.email = contact.email;
-        nurseryDetails.email_breaks = module.exports.addUrlLineBreaks(contact.email);
+        const contact = nurseryData.contact;
+
+        if (
+          module.exports.objectHasOwnProperties(contact, ['website', 'url'])
+        ) {
+          nurseryDetails.website = contact.website.url;
+        }
+
+        if (
+          module.exports.objectHasOwnProperties(contact, ['email'])
+        ) {
+          nurseryDetails.email = contact.email;
+          nurseryDetails.email_breaks = module.exports.addUrlLineBreaks(contact.email);
+        }
+
+        if (
+          module.exports.objectHasOwnProperties(contact, ['phone'])
+        ) {
+          nurseryDetails.phone = contact.phone;
+          nurseryDetails.phone_tel = contact.phone.replace('-', '');
+        }
+
+        if (
+          module.exports.objectHasOwnProperties(contact, ['fax'])
+        ) {
+          nurseryDetails.fax = contact.fax;
+          nurseryDetails.fax_tel = contact.fax.replace('-', '');
+        }
+
+        if (
+          module.exports.objectHasOwnProperties(contact, ['name'])
+        ) {
+          nurseryDetails.contact_name = contact.name;
+        }
       }
 
       if (
-        module.exports.objectHasOwnProperties(contact, ['phone'])
+        module.exports.objectHasOwnProperties(nurseryData, ['location'])
       ) {
-        nurseryDetails.phone = contact.phone;
-        nurseryDetails.phone_tel = contact.phone.replace('-', '');
+        const location = nurseryData.location;
+
+        if (
+          module.exports.objectHasOwnProperties(location, ['address_1'])
+        ) {
+          nurseryDetails.address_1 = location.address_1;
+        }
+
+        if (
+          module.exports.objectHasOwnProperties(location, ['address_2'])
+        ) {
+          nurseryDetails.address_2 = location.address_2;
+        }
+
+        if (
+          module.exports.objectHasOwnProperties(location, ['city'])
+        ) {
+          nurseryDetails.city = location.city;
+        }
+
+        if (
+          module.exports.objectHasOwnProperties(location, ['state'])
+        ) {
+          nurseryDetails.state = location.state;
+        }
+
+        if (
+          module.exports.objectHasOwnProperties(location, ['postal_code'])
+        ) {
+          nurseryDetails.postal_code = location.postal_code;
+        }
+
+        if (
+          module.exports.objectHasOwnProperties(location, ['country']) &&
+          module.exports.objectHasOwnProperties(location.country, ['united_states']) &&
+          module.exports.objectHasOwnProperties(location.country, ['canada'])
+        ) {
+
+          nurseryDetails.country = module.exports.checkBooleanObjectProperties(location.country, (key, in_use) => {
+            return module.exports.getCountryName(key);
+          });
+        }
+
+        if (
+          module.exports.objectHasOwnProperties(location, ['geo_coordinate'])
+        ) {
+          nurseryDetails.geo_coordinate = location.geo_coordinate;
+        }
       }
 
       if (
-        module.exports.objectHasOwnProperties(contact, ['fax'])
+        module.exports.objectHasOwnProperties(nurseryData, ['catalog'])
       ) {
-        nurseryDetails.fax = contact.fax;
-        nurseryDetails.fax_tel = contact.fax.replace('-', '');
-      }
+        const catalog = nurseryData.catalog;
 
-      if (
-        module.exports.objectHasOwnProperties(contact, ['name'])
-      ) {
-        nurseryDetails.contact_name = contact.name;
-      }
-    }
+        if (
+          module.exports.objectHasOwnProperties(catalog, ['print'])
+        ) {
+          nurseryDetails.catalog_print = catalog.print;
+        }
 
-    if (
-      module.exports.objectHasOwnProperties(nurseryData, ['location'])
-    ) {
-      const location = nurseryData.location;
+        if (
+          module.exports.objectHasOwnProperties(catalog, ['online'])
+        ) {
+          nurseryDetails.catalog_online = catalog.online;
+        }
 
-      if (
-        module.exports.objectHasOwnProperties(location, ['address_1'])
-      ) {
-        nurseryDetails.address_1 = location.address_1;
-      }
-
-      if (
-        module.exports.objectHasOwnProperties(location, ['address_2'])
-      ) {
-        nurseryDetails.address_2 = location.address_2;
-      }
-
-      if (
-        module.exports.objectHasOwnProperties(location, ['city'])
-      ) {
-        nurseryDetails.city = location.city;
-      }
-
-      if (
-        module.exports.objectHasOwnProperties(location, ['state'])
-      ) {
-        nurseryDetails.state = location.state;
-      }
-
-      if (
-        module.exports.objectHasOwnProperties(location, ['postal_code'])
-      ) {
-        nurseryDetails.postal_code = location.postal_code;
-      }
-
-      if (
-        module.exports.objectHasOwnProperties(location, ['country']) &&
-        module.exports.objectHasOwnProperties(location.country, ['united_states']) &&
-        module.exports.objectHasOwnProperties(location.country, ['canada'])
-      ) {
-
-        nurseryDetails.country = module.exports.checkBooleanObjectProperties(location.country, (key, in_use) => {
-          return module.exports.getCountryName(key);
-        });
-      }
-
-      if (
-        module.exports.objectHasOwnProperties(location, ['geo_coordinate'])
-      ) {
-        nurseryDetails.geo_coordinate = location.geo_coordinate;
-      }
-    }
-
-    if (
-      module.exports.objectHasOwnProperties(nurseryData, ['catalog'])
-    ) {
-      const catalog = nurseryData.catalog;
-
-      if (
-        module.exports.objectHasOwnProperties(catalog, ['print'])
-      ) {
-        nurseryDetails.catalog_print = catalog.print;
-      }
-
-      if (
-        module.exports.objectHasOwnProperties(catalog, ['online'])
-      ) {
-        nurseryDetails.catalog_online = catalog.online;
-      }
-
-      if (
-        module.exports.objectHasOwnProperties(catalog, ['web_only'])
-      ) {
-        nurseryDetails.catalog_web_only = catalog.web_only;
+        if (
+          module.exports.objectHasOwnProperties(catalog, ['web_only'])
+        ) {
+          nurseryDetails.catalog_web_only = catalog.web_only;
+        }
       }
     }
 

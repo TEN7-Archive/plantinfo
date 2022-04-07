@@ -19,6 +19,7 @@ module.exports = async (configData) => {
 
   if (isObject(plantInfoData)) {
     let nurseriesData = getCollectionPathData(plantInfoData, ['nurseries', 'data']);
+    console.log('have plantinfo data');
 
     if (process.env.ELEVENTY_SERVERLESS) {
       pathNursery = getConfigPathData(configData, ['eleventy', 'serverless', 'path', 'nursery']);

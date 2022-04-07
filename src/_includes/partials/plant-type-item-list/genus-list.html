@@ -1,7 +1,8 @@
+{% set plants_data = plant_info_data['plants']['data'] %}
 <article class="[ genus-display ]">
   <h2>Plant genus list</h2>
   <ul class="[ list ] [ plant-display__list ] [ genus-display__list ]">
-    {% for item in collections.genus %}
+    {% for item in plants_data['genus'] %}
       <li class="[ list-item ] [ genus-display__list-item ]">
         <a class="[ link ]" href="/plants/family/{{ item.data.family }}/genus/{{ item.data.machine_name }}/">{{ item.data.name }}</a>
       </li>

@@ -1,5 +1,5 @@
 {% if level_machine_name %}
-  {% set level_plant = helpers.getPlantByTypeAndMachineName(collections, level_type, level_machine_name) %}
+  {% set level_plant = helpers.getPlantByTypeAndMachineName(plants_data, level_type, level_machine_name) %}
   {% set level_name = level_plant.data.name %}
   {% set level_permalink_path = helpers.createPlantPermalinkPath(level_plant) %}
   {% set level_class %}taxonomy-levels__level taxonomy-levels__level--{{ level_type }}{% endset %}

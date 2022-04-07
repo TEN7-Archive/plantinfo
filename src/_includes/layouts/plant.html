@@ -20,7 +20,8 @@
     {% set plant_name = plant_data.name %}
     {% set plant_machine_name = plant_data.machine_name %}
     {% set plant_type = plant_data.type %}
-    {% set scientificNameInfo = helpers.getScientificNameInfo(collections, plant_data, plant_type) %}
+    {% set plants_data = plant_info_data['plants']['data'] %}
+    {% set scientificNameInfo = helpers.getScientificNameInfo(plants_data, plant_data, plant_type) %}
   {% endif %}
 {% endif %}
 
