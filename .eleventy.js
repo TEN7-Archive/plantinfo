@@ -8,7 +8,7 @@ const UpgradeHelper = require("@11ty/eleventy-upgrade-help");
 
 module.exports = config => {
   let
-    maxDataItemsPerLevel = 5,
+    maxDataItemsPerLevel = 7,
     cacheDuration = '1m',
     cacheDirectory = '.cache',
     cacheDurationServerless = '*',
@@ -178,80 +178,11 @@ module.exports = config => {
   config.addNunjucksFilter("getNurseryCategoryPermalink", (value) => getNurseryCategoryPermalink(value));
   config.addNunjucksFilter("getCommonNamePermalink", (value) => getCommonNamePermalink(value));
 
-  // Returns journal_book items.
-  config.addCollection('journal_book', async (collection) => {
-    rootData.collections.journal_book.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.journal_book.globalDataPath);
-
-    return rootData.collections.journal_book.collectionData;
-  });
-
-  // Returns citation reference items.
-  config.addCollection('citation_reference', async (collection) => {
-    rootData.collections.citation_reference.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.citation_reference.globalDataPath);
-
-    return rootData.collections.citation_reference.collectionData;
-  });
-
-  // Returns family items.
-  config.addCollection('family', async (collection) => {
-    rootData.collections.family.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.family.globalDataPath);
-
-    return rootData.collections.family.collectionData;
-  });
-
-  // Returns genus items.
-  config.addCollection('genus', async (collection) => {
-    rootData.collections.genus.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.genus.globalDataPath);
-
-    return rootData.collections.genus.collectionData;
-  });
-
-  // Returns species items.
-  config.addCollection('species', async (collection) => {
-    rootData.collections.species.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.species.globalDataPath);
-
-    return rootData.collections.species.collectionData;
-  });
-
-  // Returns variety items.
-  config.addCollection('variety', async (collection) => {
-    rootData.collections.variety.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.variety.globalDataPath);
-
-    return rootData.collections.variety.collectionData;
-  });
-
-  // Returns common name items.
-  config.addCollection('common_name', async (collection) => {
-    rootData.collections.common_name.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.common_name.globalDataPath);
-
-    return rootData.collections.common_name.collectionData;
-  });
-
-  // Returns nursery items.
-  config.addCollection('nursery', async (collection) => {
-    rootData.collections.nursery.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.nursery.globalDataPath);
-
-    return rootData.collections.nursery.collectionData;
-  });
-
-  // Returns nursery catalog items.
-  config.addCollection('nursery_catalog', async (collection) => {
-    rootData.collections.nursery_catalog.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.nursery_catalog.globalDataPath);
-
-    return rootData.collections.nursery_catalog.collectionData;
-  });
-
   // Returns nursery term items.
   config.addCollection('nursery_category', async (collection) => {
     rootData.collections.nursery_category.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.nursery_category.globalDataPath);
 
     return rootData.collections.nursery_category.collectionData;
-  });
-
-  config.addCollection('nursery_by_category', async (collection) => {
-    rootData.collections.nursery_by_category.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.nursery_by_category.globalDataPath);
-
-    return rootData.collections.nursery_by_category.collectionData;
   });
 
   // Tell 11ty to use the .eleventyignore and ignore our .gitignore file
