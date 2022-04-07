@@ -8,8 +8,8 @@ const UpgradeHelper = require("@11ty/eleventy-upgrade-help");
 
 module.exports = config => {
   let
-    maxDataItemsPerLevel = 6,
-    cacheDuration = '5m',
+    maxDataItemsPerLevel = 5,
+    cacheDuration = '1m',
     cacheDirectory = '.cache',
     cacheDurationServerless = '*',
     cacheDirectoryServerless = 'cache',
@@ -206,13 +206,6 @@ module.exports = config => {
     return rootData.collections.genus.collectionData;
   });
 
-  // Returns genus letter items.
-  config.addCollection('genusLetters', async (collection) => {
-    rootData.collections.genus_letters.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.genus_letters.globalDataPath);
-
-    return rootData.collections.genus_letters.collectionData;
-  });
-
   // Returns species items.
   config.addCollection('species', async (collection) => {
     rootData.collections.species.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.species.globalDataPath);
@@ -232,13 +225,6 @@ module.exports = config => {
     rootData.collections.common_name.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.common_name.globalDataPath);
 
     return rootData.collections.common_name.collectionData;
-  });
-
-  // Returns common name letter items.
-  config.addCollection('commonNamesLetters', async (collection) => {
-    rootData.collections.common_name_letters.collectionData = getGlobalDataCollection(collection, globalDataKey, rootData.collections.common_name_letters.globalDataPath);
-
-    return rootData.collections.common_name_letters.collectionData;
   });
 
   // Returns nursery items.
