@@ -7,8 +7,8 @@
 {% endif %}
 
 {% set plant_type_title = helpers.getPlantTypeTitle(plant_type) %}
-{% set letterCollection =  plant_type ~ 'Letters' %}
-{% set plant_type_letter_collection = collections[letterCollection] %}
+{% set letterCollection =  plant_type ~ '_letters' %}
+{% set plant_type_letter_collection = plant_info_data['plants']['data'][letterCollection] %}
 {% set plant_letter_link_list = helpers.createLetterLinkList(plant_type_letter_collection, plant_type) %}
 {% set letter_list_wrapper =
   {

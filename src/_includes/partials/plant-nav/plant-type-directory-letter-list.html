@@ -1,6 +1,6 @@
 {% set plant_type ='genus' %}
 {% set plant_type_title = helpers.getPlantTypeTitle(plant_type) %}
-{% set plant_collection = collections[plant_type] %}
+{% set plant_collection = plant_info_data['plants']['data'][plant_type] %}
 {% set plant_items = helpers.filterDirectoryItemsByLetter(plant_collection, letter_slug) %}
 {% set directory_link_list = helpers.createDirectoryLinkList(collections, plant_items, plant_type) %}
 {% set plant_link_list_wrapper =

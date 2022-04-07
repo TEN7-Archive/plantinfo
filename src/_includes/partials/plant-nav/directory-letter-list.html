@@ -7,6 +7,7 @@
 {% if nav_type == 'plant' %}
   {% include "partials/plant-nav/plant-type-directory-letter-list.html" %}
 {% elif nav_type == 'common_name' %}
+  {% set nav_type_parent = 'plants' %}
   {% set nav_type_name = 'common names' %}
   {% set nav_type_title = 'Common names' %}
   {% include "partials/plant-nav/item-type-directory-letter-list.html" %}

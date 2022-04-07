@@ -1,8 +1,9 @@
 {% set item_type = nav_type %}
+{% set item_type_parent = nav_type_parent %}
 {% set item_type_name = nav_type_name %}
 {% set item_type_title = nav_type_title ~ ' directory pages' %}
-{% set letterCollection =  letter_collection_prefix ~ 'Letters %}
-{% set item_type_letter_collection = collections[letterCollection] %}
+{% set letterCollection =  letter_collection_prefix ~ '_letters %}
+{% set item_type_letter_collection = plant_info_data[item_type_parent]['data'][letterCollection] %}
 {% set item_type_letter_link_list = helpers.createItemTypeLetterLinkList(item_type_letter_collection) %}
 {% set letter_list_wrapper =
   {
