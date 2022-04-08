@@ -8,8 +8,4 @@ pagination:
   serverless: eleventy.serverless.path.common
 permalink:
   serverless: '/plants/common-names/:common/uuid/:uuid/'
-eleventyComputed:
-  common: "{{ eleventy.serverless.path.common }}"
-  uuid: "{{ eleventy.serverless.path.uuid }}"
-
 ---

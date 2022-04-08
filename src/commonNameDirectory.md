@@ -9,5 +9,3 @@ pagination:
   serverless: eleventy.serverless.path.common_name_letter_slug
 permalink: '/common-names-directory/:common_name_letter_slug/'
 ---
-eleventyComputed:
-  common_name_letter_slug: "{{ eleventy.serverless.path.common_name_letter_slug }}"

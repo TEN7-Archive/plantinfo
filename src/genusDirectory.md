@@ -9,5 +9,3 @@ pagination:
   serverless: eleventy.serverless.path.genus_letter_slug
 permalink: '/genus-directory/{{ letter.data.genus_letter_slug }}/'
 ---
-eleventyComputed:
-  genus_letter_slug: "{{ eleventy.serverless.path.genus_letter_slug }}"

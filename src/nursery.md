@@ -8,7 +8,4 @@ pagination:
   serverless: eleventy.serverless.path.nursery
 permalink:
   serverless: '/nurseries/nursery/:nursery/uuid/:uuid/'
-eleventyComputed:
-  nursery: "{{ eleventy.serverless.path.nursery }}"
-  uuid: "{{ eleventy.serverless.path.uuid }}"
 ---
