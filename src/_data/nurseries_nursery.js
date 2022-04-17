@@ -21,6 +21,7 @@ module.exports = async (configData) => {
     let nurseriesData = getCollectionPathData(plantInfoData, ['nurseries', 'data']);
 
     if (process.env.ELEVENTY_SERVERLESS) {
+      console.log('process is serverless');
       pathNursery = getConfigPathData(configData, ['eleventy', 'serverless', 'path', 'nursery']);
       pathUUID = getConfigPathData(configData, ['eleventy', 'serverless', 'path', 'uuid']);
 

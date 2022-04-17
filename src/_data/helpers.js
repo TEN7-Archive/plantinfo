@@ -4,6 +4,7 @@ const nestedProperty = require('nested-property');
 const http = require('node:http');
 const https = require('node:https');
 const sizeof = require("object-sizeof");
+const {chunk} = require("lodash");
 
 module.exports = {
 
@@ -1661,6 +1662,202 @@ module.exports = {
     externalData = await module.exports.externalDataSeeker(externalData, externalDomainUri, externalDomainSchema, externalDataIndex, maxDataItemsPerLevel);
 
     return externalData;
+  },
+
+  /**
+   * Add paged category item.
+   *
+   * @param {Array}   categoryItemsPage          A page of category items.
+   * @param {Number}  categoryItemsPageIndex     The index for the category item page.
+   * @param {Array}   pagedCategoryCollection    The paged category collection.
+   * @param {Array}   categoryCollectionItem     The collection item.
+   * @param {String}  categoryName               The category name.
+   * @param {Array}   categoryItems              The category items.
+   * @param {Array}   pageSlugs                  The page slugs.
+   * @return {Array}                             The paged category collection.
+   */
+  addPagedCategoryItemsPage(categoryItemsPage, categoryItemsPageIndex, pagedCategoryCollection, categoryCollectionItem, categoryName, categoryItems, pageSlugs) {
+    pagedCategoryCollection.push({
+      title: categoryName,
+      slug: pageSlugs[categoryItemsPageIndex],
+      pageNumber: categoryItemsPageIndex,
+      totalPages: pageSlugs.length,
+      pages: pageSlugs,
+      pageSlugs: {
+        all: pageSlugs,
+        next: pageSlugs[categoryItemsPageIndex + 1] || null,
+        previous: pageSlugs[categoryItemsPageIndex - 1] || null,
+        first: pageSlugs[0] || null,
+        last: pageSlugs[pageSlugs.length - 1] || null
+      },
+      source: categoryCollectionItem,
+      items: categoryItemsPage
+    });
+
+    return pagedCategoryCollection;
+  },
+
+  /**
+   * Add paged category items.
+   *
+   * @param {Array}   pagedCategoryItems         The paged category items.
+   * @param {Array}   pagedCategoryCollection    The paged category collection.
+   * @param {Array}   categoryCollectionItem     The collection item.
+   * @param {String}  categoryName               The category name.
+   * @param {Array}   categoryItems              The category items.
+   * @param {Array}   pageSlugs                  The page slugs.
+   * @return {Array}                             The paged category collection.
+   */
+  addPagedCategoryItems(pagedCategoryItems, pagedCategoryCollection, categoryCollectionItem, categoryName, categoryItems, pageSlugs) {
+    pagedCategoryItems.forEach((categoryItemsPage, categoryItemsPageIndex) => {
+      module.exports.addPagedCategoryItemsPage(
+        categoryItemsPage,
+        categoryItemsPageIndex,
+        pagedCategoryCollection,
+        categoryCollectionItem,
+        categoryName,
+        categoryItems,
+        pageSlugs
+      )
+    });
+
+    return pagedCategoryCollection;
+  },
+
+  /**
+   * Add a paged category page slug.
+   *
+   * @param {Array}    pageSlugs       The page slugs.
+   * @param {Number}   pagedCategoryItemIndex    The index for the paged category item.
+   * @param {String}   baseUri         The base uri, prior to adding a page slug.
+   * @return {Array}                   The paged category items.
+   */
+  addPagedCategoryPageSlug(pageSlugs, pagedCategoryItemIndex, baseUri) {
+    let pageSlug = pagedCategoryItemIndex > 0 ? `${baseUri}/${pagedCategoryItemIndex + 1}` : `${baseUri}`;
+    pageSlugs.push(pageSlug);
+
+    return pageSlugs;
+  },
+
+  /**
+   * Get the paged category page slugs.
+   *
+   * @param {Array}    categoryItems        The category items.
+   * @param {Array}    pagedCategoryItems   The paged category items.
+   * @param {Number}   itemsPerPage    The number of items to display per page.
+   * @param {String}   baseUri         The base uri, prior to adding a page slug.
+   * @return {Array}                   The paged category items.
+   */
+  getPagedCategoryPageSlugs(categoryItems, pagedCategoryItems, itemsPerPage, baseUri) {
+    let pageSlugs = [];
+
+    if (
+      module.exports.isArrayWithItems(categoryItems)
+    ) {
+      for (let i = 0; i < pagedCategoryItems.length; i++) {
+        pageSlugs = module.exports.addPagedCategoryPageSlug(pageSlugs, i, baseUri);
+      }
+    } else {
+      pageSlugs.push(`${baseUri}`);
+    }
+
+    return pageSlugs;
+  },
+
+  /**
+   * Get the paged category items.
+   *
+   * @param {Array}    categoryItems    The category items.
+   * @param {Number}   itemsPerPage    The number of items to display per page.
+   * @return {Array}                   The paged category items.
+   */
+  getPagedCategoryItems(categoryItems, itemsPerPage) {
+    let pagedCategoryItems = [];
+
+    if (
+      module.exports.isArrayWithItems(categoryItems)
+    ) {
+      pagedCategoryItems = chunk(categoryItems, itemsPerPage);
+    }
+
+    return pagedCategoryItems;
+  },
+
+
+  /**
+   * Check item from category collection to see if it should be added to the
+   * paged category collection.
+   *
+   * @param {Array}    categoryCollectionItem    The category collection item.
+   * @param {Array}    pagedCategoryCollection   The paged category collection.
+   * @param {Number}   itemsPerPage    The number of items to display per page.
+   * @param {String}   itemType        The term type to use for the collection.
+   * @param {String}   uriSlugDir      The directory path to the slug in the uri.
+   * @return {Array}                   The paged category collection.
+   */
+  checkPagedCategoryCollectionItem(categoryCollectionItem, pagedCategoryCollection, itemsPerPage, itemType, uriSlugDir) {
+    if (
+      module.exports.objectHasOwnProperties(categoryCollectionItem, ['data'])
+    ) {
+      if (
+        module.exports.objectHasOwnProperties(categoryCollectionItem['data'], ['name']) &&
+        module.exports.objectHasOwnProperties(categoryCollectionItem['data'], ['machine_name']) &&
+        module.exports.objectHasOwnProperties(categoryCollectionItem['data'], ['archival_data', 'id']) &&
+        module.exports.objectHasOwnProperties(categoryCollectionItem['data'], [itemType + '_items'])
+      ) {
+
+        let
+          categorySlug = categoryCollectionItem['data']['machine_name'],
+          uuidSlug = categoryCollectionItem['data']['archival_data']['id'],
+          baseUri = uriSlugDir + categorySlug + '/uuid/' + uuidSlug,
+          categoryItems = categoryCollectionItem['data'][itemType + '_items'],
+          pagedCategoryItems = module.exports.getPagedCategoryItems(categoryItems, itemsPerPage),
+          pageSlugs = module.exports.getPagedCategoryPageSlugs(categoryItems, pagedCategoryItems, itemsPerPage, baseUri),
+          categoryName = categoryCollectionItem['data']['name']
+        ;
+
+        pagedCategoryCollection = module.exports.addPagedCategoryItems(
+          pagedCategoryItems,
+          pagedCategoryCollection,
+          categoryCollectionItem,
+          categoryName,
+          categoryItems,
+          pageSlugs
+        );
+      }
+    }
+
+    return pagedCategoryCollection;
+  },
+
+  /**
+   * Check items from category collection to see if they should be added to the
+   * paged category collection.
+   *
+   * @param {Array}    categoryCollection   The category collection.
+   * @param {Number}   itemsPerPage    The number of items to display per page.
+   * @param {String}   itemType        The term type to use for the collection.
+   * @param {String}   uriSlugDir      The directory path to the slug in the uri.
+   * @return {Array}                   The paged category collection.
+   */
+  getPagedCategoryCollection(categoryCollection, itemsPerPage, itemType, uriSlugDir) {
+    let pagedCategoryCollection = [];
+
+    if (
+      module.exports.isArrayWithItems(categoryCollection)
+    ) {
+      categoryCollection.forEach(categoryCollectionItem => {
+        pagedCategoryCollection = module.exports.checkPagedCategoryCollectionItem(
+          categoryCollectionItem,
+          pagedCategoryCollection,
+          itemsPerPage,
+          itemType,
+          uriSlugDir
+        );
+      });
+    }
+
+    return pagedCategoryCollection;
   },
 
   /**
