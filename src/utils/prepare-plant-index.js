@@ -1,3 +1,5 @@
+const showPerformanceTimingCheck = require('./show-performance-timing-check.js');
+
 const {
   objectHasOwnProperties,
   isArrayWithItems,
@@ -18,6 +20,7 @@ const {
  */
 module.exports = (plantLevels, commonNames, nurseryCatalogs, journalCitations) => {
   let index = [],
+    indexKeyChecker = {},
     plantsInNurseryCatalogs = [],
     plantsInJournalCitations = [],
     index_default_settings = {
@@ -39,6 +42,33 @@ module.exports = (plantLevels, commonNames, nurseryCatalogs, journalCitations) =
       available_in_nursery: false,
       has_citations: false
     },
+
+  addItemToIndexKeyChecker = function(indexItem, itemIndex, indexKeyChecker) {
+    if (
+      objectHasOwnProperties(indexItem, ['machine_name']) &&
+      indexItem['machine_name'] !== '' &&
+      itemIndex !== null
+    ) {
+      let
+        indexItemKey = indexItem['machine_name'],
+        itemIndexCheck = {
+          machine_name: indexItem['machine_name'],
+          itemIndex: itemIndex
+        },
+        indexItemKeyCheck = {};
+
+      indexItemKeyCheck[indexItemKey] = itemIndexCheck;
+
+      if (objectHasOwnProperties(indexKeyChecker, indexItemKey)) {
+        indexKeyChecker[indexItemKey] = itemIndexCheck;
+      } else {
+        indexKeyChecker.push(indexItemKeyCheck);
+      }
+
+    }
+
+    return indexKeyChecker;
+  },
 
   addItemToIndex = function(index_settings = index_default_settings, index) {
     let merged_index_settings = mergeObjects(index_default_settings, index_settings);
@@ -65,26 +95,74 @@ module.exports = (plantLevels, commonNames, nurseryCatalogs, journalCitations) =
     }
   },
 
-  mergeItemsToIndexProp = function(itemsArray, index, indexProp) {
-    const
-      merge_key = 'machine_name',
-      merge_settings = {};
+  getItemIndexForMerge = function(indexKeyChecker, mergeKey, itemKey) {
+    if (
+      objectHasOwnProperties(indexKeyChecker, itemKey) &&
+      objectHasOwnProperties(indexKeyChecker, ['itemIndex']) &&
+      indexKeyChecker[mergeKey] === itemKey &&
+      indexKeyChecker['itemIndex'] !== null
+    ) {
+      return indexKeyChecker['itemIndex']
+    }
+    // for (let item_index = 0; item_index < index.length; item_index++ ) {
+    //   if (index[item_index][mergeKey] === itemKey) {
+    //     // Return item index.
+    //     return item_index;
+    //   }
+    // }
 
-    merge_settings[indexProp] = true;
+    // Item index not found.
+    return -1;
+    // return index.findIndex(item => item[mergeKey] === itemKey);
+  },
+
+  addItemForMergeToIndex = function(itemsForMerge, index, indexKeyChecker, itemKey, mergeKey) {
+    let itemToMerge = {
+      item: {},
+      index: null,
+    };
+
+    // const tncmii0 = performance.now();
+    itemToMerge.index = getItemIndexForMerge(indexKeyChecker, mergeKey, itemKey);
+    // const tncmii1 = performance.now();
+    // if (indexProp === 'available_in_nursery') {
+    //   showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (nursery_catalog: mergeItemsToIndexProp:findIndex)', tncmii0, tncmii1);
+    // }
+
+    if (itemToMerge.index !== -1) {
+      itemToMerge.itemToMerge = index[itemToMerge.index];
+      itemsForMerge.push(itemToMerge);
+
+      // const tncmio0 = performance.now();
+      // const tncmio1 = performance.now();
+      // if (indexProp === 'available_in_nursery') {
+      //   showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (nursery_catalog: mergeItemsToIndexProp:mergeObjects)', tncmio0, tncmio1);
+      // }
+    }
+
+    return itemsForMerge;
+  },
+
+  mergeItemToIndex = function(itemForMerge, index, mergeSettings) {
+    index[itemForMerge.index] = mergeObjects(itemForMerge.item, mergeSettings);
+
+    return index;
+  },
+
+  mergeItemsToIndexProp = function(itemsArray, index, indexProp, indexKeyChecker) {
+    const
+      mergeKey = 'machine_name',
+      mergeSettings = {};
+
+    let itemsForMerge = [];
+    mergeSettings[indexProp] = true;
 
     itemsArray.forEach(itemKey => {
-      let
-        merged_item_index = null,
-        item_for_merge = {},
-        merged_item = {};
+      itemsForMerge = addItemForMergeToIndex(itemsForMerge, index, indexKeyChecker, mergeKey, itemKey);
+    });
 
-      merged_item_index = index.findIndex(item => item[merge_key] === itemKey);
-
-      if (merged_item_index !== -1) {
-        item_for_merge = index[merged_item_index];
-        merged_item = mergeObjects(item_for_merge, merge_settings);
-        index[merged_item_index] = merged_item;
-      }
+    itemsForMerge.forEach(itemForMerge => {
+      index = mergeItemToIndex(itemForMerge, index, mergeSettings);
     });
 
     return index;
@@ -93,7 +171,7 @@ module.exports = (plantLevels, commonNames, nurseryCatalogs, journalCitations) =
   mergeCommonNameWithIndex = function(index_settings = index_default_settings, index) {
     let
       merged_index_settings = mergeObjects(index_default_settings, index_settings),
-      merge_key = 'machine_name',
+      mergeKey = 'machine_name',
       merge_with_index = false,
       merged_item_index = null,
       item_for_merge = {},
@@ -106,7 +184,9 @@ module.exports = (plantLevels, commonNames, nurseryCatalogs, journalCitations) =
       index_settings['has_plant'] === true &&
       index_settings['has_common_name'] === true
     ) {
-      merged_item_index = index.findIndex(item => item[merge_key] === index_settings['machine_name']);
+      let itemKey = index_settings['machine_name'];
+
+      merged_item_index = getItemIndexForMerge(index, mergeKey, itemKey);
 
       if (merged_item_index !== -1) {
         item_for_merge = index[merged_item_index];
@@ -268,6 +348,7 @@ module.exports = (plantLevels, commonNames, nurseryCatalogs, journalCitations) =
       isArrayWithItems(plantLevels) &&
       Array.isArray(index)
     ) {
+      console.log(plantLevels.length + ' plant levels to add to index');
       return plantLevels.reduce((index, plantLevel) => {
         return addPlantLevelToIndex(plantLevel, index);
       }, index);
@@ -276,11 +357,26 @@ module.exports = (plantLevels, commonNames, nurseryCatalogs, journalCitations) =
     }
   },
 
-  addCommonNamesToIndex = function(commonNames, index) {
+  createIndexKeyChecker = function(index, indexKeyChecker) {
+    if (
+      isArrayWithItems(index)
+    ) {
+      console.log(index.length + ' index items to add to index key checker');
+      index.forEach((indexItem, itemIndex) => {
+        indexKeyChecker = addItemToIndexKeyChecker(indexItem, itemIndex, indexKeyChecker);
+      });
+    }
+
+    return indexKeyChecker;
+  },
+
+  addCommonNamesToIndex = function(commonNames, index, indexKeyChecker) {
     if (
       isArrayWithItems(commonNames) &&
+      isArrayWithItems(indexKeyChecker) &&
       Array.isArray(index)
     ) {
+      console.log(commonNames.length + ' common names to add to index');
       return commonNames.reduce((index, commonName) => {
         return addCommonNameToIndex(commonName, index);
       }, index);
@@ -289,39 +385,77 @@ module.exports = (plantLevels, commonNames, nurseryCatalogs, journalCitations) =
     }
   },
 
-  reviewNurseryCatalogs = function(nurseryCatalogs, index) {
+  reviewNurseryCatalogs = function(nurseryCatalogs, index, indexKeyChecker) {
     if (
       isArrayWithItems(nurseryCatalogs) &&
+      isArrayWithItems(indexKeyChecker) &&
       Array.isArray(index)
     ) {
+      // console.log(nurseryCatalogs.length + ' nursery catalogs to add to index');
+      // const tncfe0 = performance.now();
       nurseryCatalogs.forEach(nurseryCatalog => {
         reviewNurseryCatalog(nurseryCatalog);
       });
+      // const tncfe1 = performance.now();
+      // showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (reviewNurseryCatalogs:forEach)', tncfe0, tncfe1);
+
     }
 
-    index = mergeItemsToIndexProp(plantsInNurseryCatalogs, index, 'available_in_nursery')
+    // const tncmi0 = performance.now();
+    index = mergeItemsToIndexProp(plantsInNurseryCatalogs, index, 'available_in_nursery', indexKeyChecker);
+    // const tncmi1 = performance.now();
+    // showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (reviewNurseryCatalogs:mergeItems)', tncmi0, tncmi1);
 
     return index;
   },
 
-  reviewJournalCitations = function(journalCitations, index) {
+  reviewJournalCitations = function(journalCitations, index, indexKeyChecker) {
     if (
       isArrayWithItems(journalCitations) &&
+      isArrayWithItems(indexKeyChecker) &&
       Array.isArray(index)
     ) {
+      // console.log(journalCitations.length + ' journal citations to add to index');
+      // const tjcfe0 = performance.now();
       journalCitations.forEach(journalCitation => {
         reviewJournalCitation(journalCitation);
       });
+      // const tjcfe1 = performance.now();
+      // showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (reviewJournalCitations:forEach)', tjcfe0, tjcfe1);
     }
 
-    index = mergeItemsToIndexProp(plantsInJournalCitations, index, 'has_citations')
+    // const tjcmi0 = performance.now();
+    index = mergeItemsToIndexProp(plantsInJournalCitations, index, 'has_citations', indexKeyChecker);
+    // const tjcmi1 = performance.now();
+    // showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (reviewJournalCitations:mergeItems)', tjcmi0, tjcmi1);
 
     return index;
   }
 
+  // const tpl0 = performance.now();
   index = addPlantLevelsToIndex(plantLevels, index);
-  index = addCommonNamesToIndex(commonNames, index);
-  index = reviewNurseryCatalogs(nurseryCatalogs, index);
-  index = reviewJournalCitations(journalCitations, index);
+  // const tpl1 = performance.now();
+  // showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (addPlantLevelsToIndex)', tpl0, tpl1);
+
+  // const tcik0 = performance.now();
+  indexKeyChecker = createIndexKeyChecker(index, indexKeyChecker);
+  // const tcik1 = performance.now();
+  // showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (createIndexKeyChecker)', tcik0, tcik1);
+
+  // const tcn0 = performance.now();
+  index = addCommonNamesToIndex(commonNames, index, indexKeyChecker);
+  // const tcn1 = performance.now();
+  // showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (addCommonNamesToIndex)', tcn0, tcn1);
+
+  // const tnc0 = performance.now();
+  index = reviewNurseryCatalogs(nurseryCatalogs, index, indexKeyChecker);
+  // const tnc1 = performance.now();
+  // showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (reviewNurseryCatalogs)', tnc0, tnc1);
+
+  // const trj0 = performance.now();
+  index = reviewJournalCitations(journalCitations, index, indexKeyChecker);
+  // const trj1 = performance.now();
+  // showPerformanceTimingCheck('plant_info/plants/data/plant_prepare_index (reviewJournalCitations)', trj0, trj1);
+
   return index;
 };

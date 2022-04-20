@@ -5,7 +5,9 @@
   "main": ".eleventy.js",
   "scripts": {
     "start": "npx gulp && concurrently \"npx gulp watch\" \"npx @11ty/eleventy --serve\"",
-    "production": "NODE_ENV=production npx gulp && NODE_ENV=production npx @11ty/eleventy"
+    "production": "NODE_ENV=production npx gulp && NODE_ENV=production npx @11ty/eleventy",
+    "inspect:eleventy": "node --inspect ./node_modules/.bin/eleventy",
+    "maxsize:eleventy": "node --max-old-space-size=8000 ./node_modules/.bin/eleventy"
   },
   "repository": {
     "type": "git",

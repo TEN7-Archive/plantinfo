@@ -9,11 +9,24 @@ module.exports = (itemToCheck, timeStart, timeEnd) => {
   let
     DecimalsToRound = 2,
     timeInterval = timeEnd - timeStart,
-    timeUnit = 'seconds',
-    timeIntervalSeconds = timeInterval/1000,
-    timeIntervalSecondsRounded = timeIntervalSeconds.toFixed(DecimalsToRound),
-    timingMessage = itemToCheck + ' took ' + timeIntervalSecondsRounded + ' ' + timeUnit + '.'
+    timeUnit = 'milliseconds'
   ;
+
+  if (timeInterval > 1000) {
+    timeUnit = 'seconds'
+    timeInterval = timeInterval/1000
+  }
+
+  let
+    timeIntervalRounded = timeInterval.toFixed(DecimalsToRound),
+    timingInMessage = timeIntervalRounded + ' ' + timeUnit;
+  ;
+
+  if (timeUnit === 'seconds') {
+    timingInMessage = '***' + timingInMessage + '***'
+  }
+
+  let timingMessage = itemToCheck + ' took ' + timingInMessage + '.';
 
   console.log(timingMessage);
 };

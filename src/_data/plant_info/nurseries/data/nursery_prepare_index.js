@@ -2,6 +2,7 @@ const getCacheOptions = require('../../../../utils/get-cache-options.js');
 const getCacheAssetNew = require("../../../../utils/get-cache-asset-new.js");
 const getCacheAssetCheck = require("../../../../utils/get-cache-asset-check.js");
 const getCacheAssetSave = require("../../../../utils/get-cache-asset-save.js");
+const showPerformanceTimingCheck = require('../../../../utils/show-performance-timing-check.js');
 
 const getNurseryData = require("./nursery.js");
 const getNurseryCategoryData = require("./nursery_category.js");
@@ -22,6 +23,7 @@ module.exports = async (configData) => {
     nurseryCategoryData = {}
   ;
 
+  const t0 = performance.now();
   cacheContents = await getCacheAssetCheck(cacheAsset, cacheOptions);
 
   if (cacheContents !== null) {
@@ -43,6 +45,8 @@ module.exports = async (configData) => {
 
     await getCacheAssetSave(cacheAsset, cacheContents);
   }
+  const t1 = performance.now();
+  showPerformanceTimingCheck('plant_info/nurseries/data/nursery_prepare_index', t0, t1);
 
   return cacheContents;
 }
