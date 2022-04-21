@@ -1544,7 +1544,7 @@ module.exports = {
               arrayItemIndex = arrayItems.indexOf(arrayItem),
               arrayItemIndexed = null;
 
-            if (arrayItemIndex < levelArray.maxDataItemsPerLevel) {
+            if (arrayItemIndex < levelArray.maxDataItemsPerLevel || levelArray.maxDataItemsPerLevel === -1) {
               arrayItemIndexed = await levelArray.forArrayItem(arrayItem, arrayItemIndex);
               levelArray.setMostRecentArrayItemIndexed(arrayItemIndexed);
             }
