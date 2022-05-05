@@ -758,10 +758,15 @@ module.exports = {
     let dataFetched = null;
 
     await fetch(fetchURI, fetchOptions)
-      .then(response => response.json())
-      .then(fetchedJSON => {
-        dataFetched = fetchedJSON;
-      })
+      .then(async (response) => {
+          let responseData = await response.json();
+
+          if (response.status === 200){
+            dataFetched = responseData;
+          } else {
+            throw response.status + " error fetching " + fetchURI;
+          }
+        })
       .catch(console.error);
 
     return dataFetched;
