@@ -9,7 +9,7 @@ pagination:
 permalink:
   serverless: '/plants/family/:family/uuid/:uuid/'
 eleventyComputed:
-    title: "Plant Family: {{ plant.data.name }}"
-    family: "{{ eleventy.serverless.path.family }}"
-    uuid: "{{ eleventy.serverless.path.uuid }}"
+  title: "Plant Family: {{ plant.data.name }}"
+  family: "{{ eleventy.serverless.path.family }}"
+  uuid: "{{ eleventy.serverless.path.uuid }}"
 ---

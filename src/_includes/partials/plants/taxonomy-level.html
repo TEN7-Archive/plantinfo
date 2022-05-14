@@ -1,7 +1,8 @@
-{% if level_machine_name %}
-  {% set level_plant = helpers.getPlantByTypeAndMachineName(plants_data, level_type, level_machine_name) %}
-  {% set level_name = level_plant.data.name %}
-  {% set level_permalink_path = helpers.createPlantPermalinkPath(level_plant) %}
+{% if level_machine_name !== '' %}
+  {% set level_plant = taxonomy_level.level_plant %}
+  {% set level_name = taxonomy_level.level_name %}
+  {% set level_permalink_path = taxonomy_level.level_permalink_path %}
+
   {% set level_class %}taxonomy-levels__level taxonomy-levels__level--{{ level_type }}{% endset %}
   {% set level_active = false %}
   {% if level_name == plant_name %}

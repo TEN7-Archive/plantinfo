@@ -1,6 +1,5 @@
-{% set plant_type = plant_data.type %}
-{% set citations_collection = plant_info_data['citations']['data']['citation_reference'] %}
-{% set plant_citation_items = helpers.getPlantCitations(citations_collection, plant_data) %}
+{% set plant_name = eleventyPlant.dataset.plant_name %}
+{% set plant_citation_items = eleventyPlant.dataset.plant_citation_items %}
 
 {% set citation_list_wrapper =
   {
@@ -10,7 +9,7 @@
     heading_level: 'h2',
     title: 'Plant Citations',
     list: plant_citation_items,
-    empty_message: 'There are no citations for ' ~ plant_data.name ~ '.'
+    empty_message: 'There are no citations for ' ~ plant_name ~ '.'
   }
 %}
 

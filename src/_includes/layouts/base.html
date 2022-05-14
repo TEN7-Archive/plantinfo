@@ -26,6 +26,10 @@
  </head>
   <body>
     <div class="site-wrap">
+<!--      {% set navHeader = eleventyNavigation.header %}-->
+<!--      {% set navFooter = eleventyNavigation.footer %}-->
+<!--      {% macro current_page_attr(item) %}{% if item.link_is_current_page %} aria-current="page" {% endif %}{% endmacro %}-->
+<!--      {% macro state_active_attr(item) %}{% if item.link_state_is_active %} data-state="active" {% endif %}{% endmacro %}-->
       {% include "partials/site-head.html" %}
       <main tabindex="-1" id="main-content">
         {% block content %}{% endblock %}

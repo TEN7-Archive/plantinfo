@@ -1,16 +1,7 @@
-{% set plant_type_default = 'genus' %}
-{% set plant_type = '' %}
-{% if nav_plant_type %}
-  {% set plant_type = nav_plant_type %}
-{% else %}
-  {% set plant_type = plant_type_default %}
-{% endif %}
+{% set plant_type = eleventyPlantLetterDirectory.dataset.plant_type %}
+{% set plant_type_title = eleventyPlantLetterDirectory.dataset.plant_type_title %}
+{% set plant_letter_link_list = eleventyPlantLetterDirectory.dataset.plant_letter_link_list %}
 
-{% set plant_type_title = helpers.getPlantTypeTitle(plant_type) %}
-{% set letterCollection =  plant_type ~ '_letters' %}
-{% set plants_data = plant_info_data['plants']['data'] %}
-{% set plant_type_letter_collection = plants_data[letterCollection] %}
-{% set plant_letter_link_list = helpers.createLetterLinkList(plant_type_letter_collection, plant_type) %}
 {% set letter_list_wrapper =
   {
     wrapper_class: '[ letter-list-section--' ~ plant_type ~ '-directory letter-list-section--directory ]',

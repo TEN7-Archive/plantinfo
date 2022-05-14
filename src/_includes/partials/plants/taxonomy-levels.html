@@ -1,16 +1,11 @@
 <nav class="taxonomy-levels" role="nav">
   <h2 class="[ headline-with-border ] [ taxonomy-levels__title ]">Taxonomy Levels</h2>
   <ul class="taxonomy-levels__level-list">
-    {% set level_machine_name = scientificNameInfo.genus.machine_name %}
-    {% set level_type = 'genus' %}
-    {% include "partials/plants/taxonomy-level.html" %}
-
-    {% set level_machine_name = scientificNameInfo.species.machine_name %}
-    {% set level_type = 'species' %}
-    {% include "partials/plants/taxonomy-level.html" %}
-
-    {% set level_machine_name = scientificNameInfo.variety.machine_name %}
-    {% set level_type = 'variety' %}
-    {% include "partials/plants/taxonomy-level.html" %}
+    {% set taxonomy_levels = eleventyPlant.dataset.taxonomy_levels %}
+    {% for taxonomy_level in taxonomy_levels %}
+      {% set level_machine_name = taxonomy_level.level_machine_name %}
+      {% set level_type = taxonomy_level.level_type %}
+      {% include "partials/plants/taxonomy-level.html" %}
+    {% endfor %}
   </ul>
 </nav>

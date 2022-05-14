@@ -3,27 +3,12 @@
 {% set show_related_data = 'true' %}
 {% set show_citations = 'true' %}
 
-{% set plant_name = '' %}
-{% set plant_machine_name = '' %}
-{% set plant_type = '' %}
-{% set scientificNameInfo = {} %}
-{% set plant_data = {} %}
-
-{% if helpers.objectHasOwnProperties(plant, ['data']) %}
-  {% set plant_data = plant.data %}
-
-  {% if
-    (helpers.objectHasOwnProperties(plant_data, ['name'])) and
-    (helpers.objectHasOwnProperties(plant_data, ['machine_name'])) and
-    (helpers.objectHasOwnProperties(plant_data, ['type']))
-  %}
-    {% set plant_name = plant_data.name %}
-    {% set plant_machine_name = plant_data.machine_name %}
-    {% set plant_type = plant_data.type %}
-    {% set plants_data = plant_info_data['plants']['data'] %}
-    {% set scientificNameInfo = helpers.getScientificNameInfo(plants_data, plant_data, plant_type) %}
-  {% endif %}
-{% endif %}
+{% set has_plant_data = eleventyPlant.dataset.has_plant_data %}
+{% set plant_data = eleventyPlant.dataset.plant_data %}
+{% set plant_name = eleventyPlant.dataset.plant_name %}
+{% set plant_machine_name = eleventyPlant.dataset.plant_machine_name %}
+{% set plant_type = eleventyPlant.dataset.plant_type %}
+{% set scientificNameInfo = eleventyPlant.dataset.scientificNameInfo %}
 
 {% block content %}
 

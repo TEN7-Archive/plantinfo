@@ -1,9 +1,7 @@
-{% set plant_type ='genus' %}
-{% set plant_type_title = helpers.getPlantTypeTitle(plant_type) %}
-{% set plants_data = plant_info_data['plants']['data'] %}
-{% set plant_collection = plants_data[plant_type] %}
-{% set plant_items = helpers.filterDirectoryItemsByLetter(plant_collection, letter_slug) %}
-{% set directory_link_list = helpers.createDirectoryLinkList(plants_data, plant_items, plant_type) %}
+{% set plant_type = eleventyPlantLetterDirectory.dataset.plant_type %}
+{% set plant_type_title = eleventyPlantLetterDirectory.dataset.plant_type_title %}
+{% set directory_link_list = eleventyPlantLetterDirectory.dataset.plant_directory_link_list %}
+
 {% set plant_link_list_wrapper =
   {
     wrapper_class: '[ directory-' ~ plant_type ~ '__link-list-section ]',

@@ -111,6 +111,20 @@ module.exports = {
   },
 
   /**
+   * Checks if this item is not empty.
+   *
+   * @param {Array}       checkThis   The item to check.
+   * @returns {Boolean}               The determination if this not empty.
+   */
+  isNotEmpty(checkThis) {
+    return (
+      typeof checkThis !== undefined &&
+      typeof checkThis !== null &&
+      checkThis !== ''
+    );
+  },
+
+  /**
    * Checks if this is an array that has items.
    *
    * @param {Array}       checkThis   The item to check.
@@ -1922,6 +1936,42 @@ module.exports = {
     }
 
     return response;
+  },
+
+  /**
+   * Returns back some attributes based on whether the
+   * link is active or a parent of an active item
+   *
+   * @param {String} itemUrl The link in question
+   * @param {String} pageUrl The page context
+   * @returns {Boolean} The attributes or empty
+   */
+  getLinkIsCurrentPage(itemUrl, pageUrl) {
+    let link_is_current_page = false;
+
+    if (itemUrl === pageUrl) {
+      link_is_current_page = true
+    }
+
+    return link_is_current_page;
+  },
+
+  /**
+   * Returns back some attributes based on whether the
+   * link is active or a parent of an active item
+   *
+   * @param {String} itemUrl The link in question
+   * @param {String} pageUrl The page context
+   * @returns {Boolean} The attributes or empty
+   */
+  getLinkStateIsActive(itemUrl, pageUrl) {
+    let link_state_is_active = false;
+
+    if (itemUrl.length > 1 && pageUrl.indexOf(itemUrl) === 0) {
+      link_state_is_active = true
+    }
+
+    return link_state_is_active;
   },
 
   /**
