@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/ten7/plantinfo#readme",
   "devDependencies": {
-    "@11ty/eleventy": "github:11ty/eleventy#v2.0.0-canary.8",
+    "@11ty/eleventy": "github:11ty/eleventy#v2.0.0-canary.11",
     "@11ty/eleventy-cache-assets": "^2.3.0",
     "@11ty/eleventy-upgrade-help": "^1.0.1",
     "concurrently": "^7.0.0",
@@ -42,7 +42,6 @@
   "dependencies": {
     "@11ty/eleventy-fetch": "^3.0.0",
     "@netlify/functions": "^0.11.0",
-    "eleventy": "github:11ty/eleventy#master",
     "object-sizeof": "^1.6.3"
   }
 }
