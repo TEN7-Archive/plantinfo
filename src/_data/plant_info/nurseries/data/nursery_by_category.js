@@ -30,7 +30,7 @@ module.exports = async (configData) => {
 
     cacheContents = getPagedCategoryCollection(
       nurserySpecialtyData,
-      20,
+      50,
       'nursery_category'
     );
 

@@ -1684,19 +1684,18 @@ module.exports = {
   },
 
   /**
-   * Add paged category item.
+   * Get paged category item.
    *
    * @param {Array}   categoryItemsPage          A page of category items.
    * @param {Number}  categoryItemsPageIndex     The index for the category item page.
-   * @param {Array}   pagedCategoryCollection    The paged category collection.
    * @param {Array}   categoryCollectionItem     The collection item.
    * @param {String}  categoryName               The category name.
    * @param {Array}   categoryItems              The category items.
    * @param {Array}   pageSlugs                  The page slugs.
-   * @return {Array}                             The paged category collection.
+   * @return {Object}                            The paged category items page..
    */
-  addPagedCategoryItemsPage(categoryItemsPage, categoryItemsPageIndex, pagedCategoryCollection, categoryCollectionItem, categoryName, categoryItems, pageSlugs) {
-    pagedCategoryCollection.push({
+  getPagedCategoryItemsPage(categoryItemsPage, categoryItemsPageIndex, categoryCollectionItem, categoryName, categoryItems, pageSlugs) {
+    return {
       title: categoryName,
       slug: pageSlugs[categoryItemsPageIndex],
       pageNumber: categoryItemsPageIndex,
@@ -1711,36 +1710,7 @@ module.exports = {
       },
       source: categoryCollectionItem,
       items: categoryItemsPage
-    });
-
-    return pagedCategoryCollection;
-  },
-
-  /**
-   * Add paged category items.
-   *
-   * @param {Array}   pagedCategoryItems         The paged category items.
-   * @param {Array}   pagedCategoryCollection    The paged category collection.
-   * @param {Array}   categoryCollectionItem     The collection item.
-   * @param {String}  categoryName               The category name.
-   * @param {Array}   categoryItems              The category items.
-   * @param {Array}   pageSlugs                  The page slugs.
-   * @return {Array}                             The paged category collection.
-   */
-  addPagedCategoryItems(pagedCategoryItems, pagedCategoryCollection, categoryCollectionItem, categoryName, categoryItems, pageSlugs) {
-    pagedCategoryItems.forEach((categoryItemsPage, categoryItemsPageIndex) => {
-      module.exports.addPagedCategoryItemsPage(
-        categoryItemsPage,
-        categoryItemsPageIndex,
-        pagedCategoryCollection,
-        categoryCollectionItem,
-        categoryName,
-        categoryItems,
-        pageSlugs
-      )
-    });
-
-    return pagedCategoryCollection;
+    };
   },
 
   /**
@@ -1808,13 +1778,14 @@ module.exports = {
    * paged category collection.
    *
    * @param {Array}    categoryCollectionItem    The category collection item.
-   * @param {Array}    pagedCategoryCollection   The paged category collection.
    * @param {Number}   itemsPerPage    The number of items to display per page.
    * @param {String}   itemType        The term type to use for the collection.
    * @param {String}   uriSlugDir      The directory path to the slug in the uri.
    * @return {Array}                   The paged category collection.
    */
-  checkPagedCategoryCollectionItem(categoryCollectionItem, pagedCategoryCollection, itemsPerPage, itemType, uriSlugDir) {
+  getPagedCategoryItemsPages(categoryCollectionItem, itemsPerPage, itemType, uriSlugDir) {
+    let pagedCategoryItemsPages = [];
+
     if (
       module.exports.objectHasOwnProperties(categoryCollectionItem, ['data'])
     ) {
@@ -1835,15 +1806,31 @@ module.exports = {
           categoryName = categoryCollectionItem['data']['name']
         ;
 
-        pagedCategoryCollection = module.exports.addPagedCategoryItems(
-          pagedCategoryItems,
-          pagedCategoryCollection,
-          categoryCollectionItem,
-          categoryName,
-          categoryItems,
-          pageSlugs
-        );
+        pagedCategoryItems.forEach((categoryItemsPage, categoryItemsPageIndex) => {
+          let pagedCategoryItemsPage = module.exports.getPagedCategoryItemsPage(categoryItemsPage, categoryItemsPageIndex, categoryCollectionItem, categoryName, categoryItems, pageSlugs);
+
+          if (module.exports.isObject(pagedCategoryItemsPage)) {
+            pagedCategoryItemsPages.push(pagedCategoryItemsPage);
+          }
+        });
+
       }
+    }
+
+    return pagedCategoryItemsPages;
+  },
+
+  addPagedCategoryItemsPage(pagedCategoryItemsPage, pagedCategoryCollection) {
+    pagedCategoryCollection.push(pagedCategoryItemsPage);
+
+    return pagedCategoryCollection;
+  },
+
+  addPagedCategoryItemsPages(pagedCategoryItemsPages, pagedCategoryCollection) {
+    if (module.exports.isArrayWithItems(pagedCategoryItemsPages)) {
+      pagedCategoryItemsPages.forEach(pagedCategoryItemsPage => {
+        pagedCategoryCollection = module.exports.addPagedCategoryItemsPage(pagedCategoryItemsPage, pagedCategoryCollection);
+      });
     }
 
     return pagedCategoryCollection;
@@ -1866,13 +1853,14 @@ module.exports = {
       module.exports.isArrayWithItems(categoryCollection)
     ) {
       categoryCollection.forEach(categoryCollectionItem => {
-        pagedCategoryCollection = module.exports.checkPagedCategoryCollectionItem(
+        let pagedCategoryItemsPages = module.exports.getPagedCategoryItemsPages(
           categoryCollectionItem,
-          pagedCategoryCollection,
           itemsPerPage,
           itemType,
           uriSlugDir
         );
+
+        pagedCategoryCollection = module.exports.addPagedCategoryItemsPages(pagedCategoryItemsPages, pagedCategoryCollection);
       });
     }
 
