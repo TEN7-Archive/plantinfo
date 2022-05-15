@@ -2210,11 +2210,6 @@ module.exports = {
       module.exports.isArrayWithItems(nurseryData.specialties)
     ) {
       nurseryData.specialties.forEach(specialty => {
-        specialityItems.push(
-          {
-            data: specialty
-          }
-        );
         if (
           module.exports.objectHasOwnProperties(specialty, ['type']) &&
           module.exports.objectHasOwnProperties(specialty, ['machine_name'])

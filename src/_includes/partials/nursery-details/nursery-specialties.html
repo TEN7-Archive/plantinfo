@@ -1,6 +1,5 @@
-{% set nursery_specialties = helpers.getNurserySpecialties(nursery.data) %}
-{% set nurseries_data = plant_info_data['nurseries']['data'] %}
-{% set nursery_specialties_link_list = helpers.createLinkList(nurseries_data, nursery_specialties, 'nursery_category', 'specialties', 'nursery_category') %}
+{% set nursery_specialties = eleventyNursery.dataset.nursery_specialties %}
+{% set nursery_specialties_link_list = eleventyNursery.dataset.nursery_specialties_link_list %}
 
 {% set nursery_specialties_inline_list_wrapper =
   {

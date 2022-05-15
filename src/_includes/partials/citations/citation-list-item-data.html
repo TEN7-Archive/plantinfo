@@ -1,9 +1,6 @@
-{% set citations_data = plant_info_data['citations']['data'] %}
-{% set journal = helpers.getItemByTypeAndMachineName(citations_data, 'journal_book', citation_item_data.journal_book) %}
-
 <span class="citation-item-data">
-  {% if journal.data.name %}
-    <span class="citation-item-data__journal">{{ journal.data.name }}</span>
+  {% if citation_item_data.journal_name %}
+    <span class="citation-item-data__journal">{{ citation_item_data.journal_name }}</span>
   {% endif %}
 
   {% if citation_item_data.page %}

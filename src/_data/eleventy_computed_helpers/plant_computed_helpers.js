@@ -13,7 +13,8 @@ const {
   getPlantByTypeAndMachineName,
   createPlantPermalinkPath,
   getCollectionPathData,
-  getPlantCitations
+  getPlantCitations,
+  getItemByTypeAndMachineName
 } = require("../helpers.js");
 
 module.exports = {
@@ -287,6 +288,36 @@ module.exports = {
     return plant_taxonomy_levels;
   },
 
+  getEleventyPlantCitationItemJournalData(citations_data, plant_citation_item) {
+    let
+      plant_citation_item_journal = {},
+      plant_citation_item_journal_name = ''
+    ;
+
+    if (objectHasOwnProperties(plant_citation_item, ['journal_book'])) {
+      plant_citation_item_journal = getItemByTypeAndMachineName(citations_data, 'journal_book', plant_citation_item['journal_book'])
+    }
+
+    if (
+      objectHasOwnProperties(plant_citation_item['journal_book'], ['data']) &&
+      objectHasOwnProperties(plant_citation_item['journal_book']['data'], ['name']) &&
+      isNotEmpty(plant_citation_item['journal_book']['data']['name'])
+    ) {
+      plant_citation_item_journal_name = plant_citation_item['journal_book']['data']['name'];
+    }
+
+    plant_citation_item['journal_name'] = plant_citation_item_journal_name;
+
+    return plant_citation_item;
+  },
+
+  getEleventyPlantCitationItemData(citations_data, plant_citation_item) {
+    plant_citation_item = module.exports.getEleventyPlantCitationItemJournalData(citations_data, plant_citation_item);
+
+    return plant_citation_item;
+  },
+
+
   getEleventyPlantCitationItems(plant_type, plant_data, citations_data, plant_citation_items) {
     if (
       isNotEmpty(plant_type) &&
@@ -295,7 +326,13 @@ module.exports = {
       const citations_collection = citations_data['citation_reference'];
 
       if (isArrayWithItems(citations_collection)) {
-        plant_citation_items = getPlantCitations(citations_collection, plant_data);
+        const initial_plant_citation_items = getPlantCitations(citations_collection, plant_data);
+
+        initial_plant_citation_items.forEach(plant_citation_item => {
+          plant_citation_item = module.exports.getEleventyPlantCitationItemData(citations_data, plant_citation_item);
+
+          plant_citation_items.push(plant_citation_item);
+        });
       }
     }
 

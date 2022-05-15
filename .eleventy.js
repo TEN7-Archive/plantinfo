@@ -151,7 +151,7 @@ module.exports = config => {
 
   config.addPlugin(UpgradeHelper);
   // Reverse 1.0.0 breaking changes until full impacts are understood.
-  config.setDataDeepMerge(false);
+  config.setDataDeepMerge(true);
   config.setLiquidOptions(
     {
       strictFilters: false,

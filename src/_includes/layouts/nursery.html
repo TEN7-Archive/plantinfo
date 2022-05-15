@@ -1,16 +1,9 @@
 {% extends "layouts/base.html" %}
 
-{% set has_nursery_data = false %}
-{% set nursery_data = {} %}
-{% set title = '' %}
-
-{% if helpers.objectHasOwnProperties(nursery, ['data']) %}
-  {% set has_nursery_data = true %}
-  {% set nursery_data = nursery.data %}
-
-  {% set nursery_details = helpers.getNurseryDetails(nursery_data) %}
-  {% set title = nursery_details.name %}
-{% endif %}
+{% set has_nursery_data = eleventyNursery.dataset.has_nursery_data %}
+{% set nursery_data = eleventyNursery.dataset.nursery_data %}
+{% set nursery_details = eleventyNursery.dataset.nursery_details %}
+{% set title = eleventyNursery.dataset.title %}
 
 {% block content %}
 
