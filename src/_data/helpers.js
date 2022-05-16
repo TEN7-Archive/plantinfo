@@ -1684,17 +1684,52 @@ module.exports = {
   },
 
   /**
+   * Get category item slug.
+   *
+   * @param {Array}   categoryItem               The category item.
+   * @return {Array}                             The category item slugs.
+   */
+  getCategoryItemsSlug(categoryItem, categoryItems) {
+    if (
+      module.exports.objectHasOwnProperties(categoryItem, ['data']) &&
+      module.exports.objectHasOwnProperties(categoryItem['data'], ['machine_name']) &&
+      module.exports.isNotEmpty(categoryItem['data']['machine_name'])
+    ) {
+      categoryItems.push(categoryItem['data']['machine_name']);
+    }
+
+    return categoryItems;
+  },
+
+  /**
+   * Get category item slugs.
+   *
+   * @param {Array}   categoryItems              The category items.
+   * @return {Array}                             The category item slugs.
+   */
+  getCategoryItemsSlugs(categoryItems) {
+    let categoryItemsSlugs = [];
+
+    if (module.exports.isArrayWithItems(categoryItems)) {
+      categoryItems.forEach(categoryItem => {
+        categoryItems = module.exports.getCategoryItemsSlug(categoryItem, categoryItems);
+      });
+    }
+
+    return categoryItemsSlugs;
+  },
+
+  /**
    * Get paged category item.
    *
-   * @param {Array}   categoryItemsPage          A page of category items.
+   * @param {Array}   categoryItemsSlugs         The slugs of the category items.
    * @param {Number}  categoryItemsPageIndex     The index for the category item page.
-   * @param {Array}   categoryCollectionItem     The collection item.
+   * @param {Array}   categorySlug               The category slug.
    * @param {String}  categoryName               The category name.
-   * @param {Array}   categoryItems              The category items.
    * @param {Array}   pageSlugs                  The page slugs.
-   * @return {Object}                            The paged category items page..
+   * @return {Object}                            The paged category items page.
    */
-  getPagedCategoryItemsPage(categoryItemsPage, categoryItemsPageIndex, categoryCollectionItem, categoryName, categoryItems, pageSlugs) {
+  getPagedCategoryItemsPage(categoryItemsSlugs, categoryItemsPageIndex, categorySlug, categoryName, pageSlugs) {
     return {
       title: categoryName,
       slug: pageSlugs[categoryItemsPageIndex],
@@ -1708,8 +1743,8 @@ module.exports = {
         first: pageSlugs[0] || null,
         last: pageSlugs[pageSlugs.length - 1] || null
       },
-      source: categoryCollectionItem,
-      items: categoryItemsPage
+      sourceSlug: categorySlug,
+      itemSlugs: categoryItemsSlugs
     };
   },
 
@@ -1807,7 +1842,9 @@ module.exports = {
         ;
 
         pagedCategoryItems.forEach((categoryItemsPage, categoryItemsPageIndex) => {
-          let pagedCategoryItemsPage = module.exports.getPagedCategoryItemsPage(categoryItemsPage, categoryItemsPageIndex, categoryCollectionItem, categoryName, categoryItems, pageSlugs);
+          let
+            categoryItemsSlugs = module.exports.getCategoryItemsSlugs(categoryItemsPage),
+            pagedCategoryItemsPage = module.exports.getPagedCategoryItemsPage(categoryItemsSlugs, categoryItemsPageIndex, categorySlug, categoryName, pageSlugs);
 
           if (module.exports.isObject(pagedCategoryItemsPage)) {
             pagedCategoryItemsPages.push(pagedCategoryItemsPage);

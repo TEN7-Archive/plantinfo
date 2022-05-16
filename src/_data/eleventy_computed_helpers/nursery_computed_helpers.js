@@ -141,6 +141,7 @@ module.exports = {
       eleventyNurseryDataset['nursery'],
       eleventyNurseryDataset['has_nursery_data']
     );
+    // console.log(eleventyNurseryDataset['has_nursery_data']);
 
     eleventyNurseryDataset['nursery_data'] = module.exports.getEleventyNurseryData(
       eleventyNurseryDataset['nursery'],
@@ -159,12 +160,17 @@ module.exports = {
       eleventyNurseryDataset['nursery_details'],
       eleventyNurseryDataset['title']
     );
+    // console.log('nursery title');
+    // console.log(eleventyNurseryDataset['title']);
 
     eleventyNurseryDataset['nursery_specialties'] = module.exports.getEleventyNurserySpecialties(
       eleventyNurseryDataset['has_nursery_data'],
       eleventyNurseryDataset['nursery_data'],
       eleventyNurseryDataset['nursery_specialties']
     );
+
+    // console.log('nursery specialties');
+    // console.log(eleventyNurseryDataset['nursery_specialties']);
 
     eleventyNurseryDataset['nursery_specialties_link_list'] = module.exports.getEleventyNurserySpecialtiesLinkList(
       nurseries_data,
@@ -176,6 +182,9 @@ module.exports = {
       eleventyNurseryDataset['nursery'],
       eleventyNurseryDataset['nursery_permalink_path']
     );
+
+    // console.log('nursery permalink path');
+    // console.log(eleventyNurseryDataset['nursery_permalink_path']);
 
     return eleventyNurseryDataset;
   }
