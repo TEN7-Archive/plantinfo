@@ -1807,6 +1807,25 @@ module.exports = {
     return pagedCategoryItems;
   },
 
+  /**
+   * Get the searchDocSegments.
+   *
+   * @param {Array}    searchDocs           The search docs
+   * @param {Number}   searchDocsPerSegment The number of docs per segment.
+   * @return {Array}                        The search doc segments.
+   */
+  getSearchDocSegments(searchDocs, searchDocsPerSegment) {
+    let searchDocSegments = [];
+
+    if (
+      module.exports.isArrayWithItems(searchDocs)
+    ) {
+      searchDocSegments = chunk(searchDocs, searchDocsPerSegment);
+    }
+
+    return searchDocSegments;
+  },
+
 
   /**
    * Check item from category collection to see if it should be added to the

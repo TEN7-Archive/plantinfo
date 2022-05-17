@@ -1,4 +1,4 @@
-const { AssetCache } = require("@11ty/eleventy-cache-assets");
+const { AssetCache } = require("@11ty/eleventy-fetch");
 const { objectHasOwnProperties } = require("../_data/helpers.js");
 
 /**

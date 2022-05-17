@@ -1,4 +1,7 @@
 const lunr = require("lunr");
+
+const { getSearchDocSegments } = require("../_data/helpers.js");
+
 const showPerformanceTimingCheck = require("./show-performance-timing-check.js");
 
 /**
@@ -10,26 +13,53 @@ const showPerformanceTimingCheck = require("./show-performance-timing-check.js")
  * @returns {Object}                    The lunr index
  */
 module.exports = (docs, refKey, fieldKeys) => {
-  return lunr(function () {
+  const tal0 = performance.now();
+  const lunrIndex = lunr(function () {
     this.ref(refKey);
 
-    // console.log(fieldKeys.length + ' field keys to add to index.')
-    // const taf0 = performance.now();
+    console.log(fieldKeys.length + ' field keys to add to index.')
+    const taf0 = performance.now();
     fieldKeys.forEach(function(fieldKey) {
       this.field(fieldKey);
     }, this);
-    // const taf1 = performance.now();
-    // showPerformanceTimingCheck('buildLunrIndex: getIndex:addFields', taf0, taf1)
+    const taf1 = performance.now();
+    showPerformanceTimingCheck('buildLunrIndex: getIndex:addFields', taf0, taf1)
 
-    // console.log(docs.length + ' docs to add to index.')
-    // const tad0 = performance.now();
+    let
+      searchDocCount = docs.length,
+      searchDocsPerSegment = 10000,
+      searchDocSegments = getSearchDocSegments(docs, searchDocsPerSegment),
+      searchDocSegmentCount = searchDocSegments.length,
+      searchDocSegmentTimeStart = 0,
+      searchDocSegmentTimeEnd = 0,
+      searchDocSegmentTime = 0,
+      searchDocSegmentTotalTime = 0
+    ;
+
+    console.log(searchDocCount + ' docs to add to index.')
+    console.log(searchDocSegmentCount + ' segments of docs to add to the index.')
+    const tad0 = performance.now();
     // for (let docsIndex = 0; docsIndex < docs.length; docsIndex++) {
     //   addDoc(docs[docsIndex], docsIndex, this);
     // }
-    for (let [docsIndex, doc] of docs.entries()) {
-      doc.id = docsIndex;
-      this.add(doc);
+    for (let [segmentIndex, searchDocSegment] of searchDocSegments.entries()) {
+      const tas0 = performance.now();
+      for (let [docsIndex, doc] of searchDocSegment.entries()) {
+        doc.id = docsIndex;
+        this.add(doc);
+      }
+      const tas1 = performance.now();
+      showPerformanceTimingCheck('buildLunrIndex: getIndex:addDocs:for loop (searchSegment ' + segmentIndex + ')', tas0, tas1);
+
+      if (searchDocSegmentTimeStart === 0) {
+        searchDocSegmentTimeStart = tas0;
+      }
+
+      searchDocSegmentTime = tas1 - tas0;
+      searchDocSegmentTotalTime = searchDocSegmentTotalTime + searchDocSegmentTime;
     }
+    searchDocSegmentTimeEnd = searchDocSegmentTimeStart + searchDocSegmentTotalTime;
+    showPerformanceTimingCheck('buildLunrIndex: getIndex:addDocs:for loop (searchDocSegments total)', searchDocSegmentTimeStart, searchDocSegmentTimeEnd);
     // docs.forEach(function (doc, idx) {
     //   const taed0 = performance.now();
     //   addDoc(doc, idx, this);
@@ -39,7 +69,11 @@ module.exports = (docs, refKey, fieldKeys) => {
     //     showPerformanceTimingCheck('buildLunrIndex: getIndex:addDoc', taed0, taed1);
     //   }
     // }, this);
-    // const tad1 = performance.now();
-    // showPerformanceTimingCheck('buildLunrIndex: getIndex:addDocs:for loop', tad0, tad1);
+    const tad1 = performance.now();
+    showPerformanceTimingCheck('buildLunrIndex: getIndex:addDocs:for loop (total)', tad0, tad1);
   });
+  const tal1 = performance.now();
+  showPerformanceTimingCheck('buildLunrIndex: lunr', tal0, tal1);
+
+  return lunrIndex;
 }

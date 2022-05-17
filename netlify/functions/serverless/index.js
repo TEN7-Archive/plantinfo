@@ -13,7 +13,8 @@ async function handler(event) {
     redirects: "netlify-toml-builders",
     copy: [
       { from: ".cache", to: "cache" }
-    ]
+    ],
+    copyEnabled: true
   });
 
   try {
